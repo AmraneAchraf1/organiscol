@@ -16,5 +16,5 @@ use Illuminate\Support\Facades\Route;
 // for testing
 Route::get('/', function () {
 
-    return 'Dev branch ';
+    return 'Dev ferdi ';
 });
