@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\auth\AuthAppController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\SalleController ;
@@ -20,3 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 route::get('/', [SalleController::class]);
 
+
+Route::get('/login', [AuthAppController::class, "index"],);
