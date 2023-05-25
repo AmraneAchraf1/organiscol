@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\api\SalleController ;
 
 
 /*
@@ -15,7 +16,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 // for testing
-Route::get('/', function () {
-
-    return 'Dev Achraf  ';
+Route::get('/', function(){
+    return 'hello';
 });

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('salles', function (Blueprint $table) {
+        Schema::create('formateurs', function (Blueprint $table) {
             $table->id();
             $table->string("nom",255);
-            $table->string("description",255);
-            $table->boolean("status",false);
-            $table->integer("espace")->nullable();
+            $table->string("prenom",255);
+            $table->enum("type",["vacataire","permanent"]);
+            $table->date("date_formation");
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('salles');
+        Schema::dropIfExists('formateurs');
     }
 };

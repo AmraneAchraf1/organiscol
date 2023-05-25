@@ -4,29 +4,29 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests\SalleRequest;
-use App\Models\Salle;
+use App\Models\Formateur;
+use App\Http\Requests\FormateurRequest;
 
-class SalleController extends Controller
+class FormateurController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $data = Salle::all();
+        $data = Formateur::all();
         return $data;
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(SalleRequest $request)
+    public function store(FormateurRequest $request)
     {
         $data = $request->validated();
-        $salle = Salle::create($data);
-        if ($salle){
-            return response()->json(["success"=>true,$salle]);
+        $formateur = Formateur::create($data);
+        if ($formateur){
+            return response()->json(["success"=>true,$formateur]);
         }else{
             return response()->json(["success"=>false],400);
         }
@@ -37,31 +37,32 @@ class SalleController extends Controller
      */
     public function show(string $id)
     {
-        $salle = Salle::find($id);
-        if ($salle){
-            return response()->json(["success"=>true,$salle]);
+        $formateur = Formateur::find($id);
+        if ($formateur){
+            return response()->json(["success"=>true,$formateur]);
         }else{
             return response()->json(["success"=>false,
-                                    "message"=>"ne trouve pas la salle de id ".$id],
+                                    "message"=>"ne trouve pas le formateur de id ".$id],
                                     400);
         }
     }
 
+
     /**
      * Update the specified resource in storage.
      */
-    public function update(SalleRequest $request, string $id)
+    public function update(FormateurRequest $request, string $id)
     {
         $data = $request->validated();
-        $salle = Salle::find($id);
-        if($salle){
-            if($salle->update($data)){
-                return response()->json(["success"=>true,$salle]);
+        $formateur = Formateur::find($id);
+        if($formateur){
+            if($formateur->update($data)){
+                return response()->json(["success"=>true,$formateur]);
             }else{
                 return response()->json(["success"=>false],400);
             }
         }else{
-            return response()->json(["message"=>"ne trouve pas la salle de id ".$id]);
+            return response()->json(["message"=>"ne trouve pas le formateur de id ".$id]);
         }
     }
 
@@ -70,15 +71,16 @@ class SalleController extends Controller
      */
     public function destroy(string $id)
     {
-        $salle = Salle::find($id);
-        if($salle){
-            if($salle->delete()){
+        $formateur = Formateur::find($id);
+        if($formateur){
+            if($formateur->delete()){
                 return response()->json(["success"=>true]);
             }else{
                 return response()->json(["success"=>false],400);
             }
 
         }else{
-            return response()->json(["message"=>"ne trouve pas la salle de id ".$id]);
+            return response()->json(["message"=>"ne trouve pas le formateur de id ".$id]);
         }
-}}
+    }
+}

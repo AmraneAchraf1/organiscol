@@ -4,6 +4,7 @@ use App\Http\Controllers\api\auth\AuthAppController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\SalleController ;
+use App\Http\Controllers\api\FormateurController ;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +20,7 @@ use App\Http\Controllers\api\SalleController ;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-route::get('/', [SalleController::class]);
-
+Route::apiResource("salles",SalleController::class);
+Route::apiResource("formateurs",FormateurController::class);
 
 Route::get('/login', [AuthAppController::class, "index"],);
