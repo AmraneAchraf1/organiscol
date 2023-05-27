@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\FormateurResource;
 use Illuminate\Http\Request;
 use App\Models\Formateur;
 use App\Http\Requests\FormateurRequest;
@@ -14,8 +15,12 @@ class FormateurController extends Controller
      */
     public function index()
     {
-        $data = Formateur::all();
-        return $data;
+        $data = FormateurResource::collection(Formateur::all());
+        if ($data->count() > 0) {
+            return response()->json(["success" => true, "formateurs" => $data]);
+        } else {
+            return response()->json(["success" => false], 400);
+        }
     }
 
     /**
@@ -26,7 +31,7 @@ class FormateurController extends Controller
         $data = $request->validated();
         $formateur = Formateur::create($data);
         if ($formateur){
-            return response()->json(["success"=>true,$formateur]);
+            return response()->json(["success"=>true,"formateur"=>$formateur]);
         }else{
             return response()->json(["success"=>false],400);
         }
@@ -39,7 +44,7 @@ class FormateurController extends Controller
     {
         $formateur = Formateur::find($id);
         if ($formateur){
-            return response()->json(["success"=>true,$formateur]);
+            return response()->json(["success"=>true,"formateur"=>new FormateurResource($formateur)]);
         }else{
             return response()->json(["success"=>false,
                                     "message"=>"ne trouve pas le formateur de id ".$id],
@@ -51,9 +56,15 @@ class FormateurController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(FormateurRequest $request, string $id)
+    public function update(Request $request, string $id)
     {
-        $data = $request->validated();
+        # validate the data
+        $data = $request->validate([
+            "nom"=>"sometimes|string",
+            "prenom"=>"sometimes|string",
+            "type"=>"sometimes|string",
+            "date_formation"=>"sometimes|date",
+        ]);
         $formateur = Formateur::find($id);
         if($formateur){
             if($formateur->update($data)){

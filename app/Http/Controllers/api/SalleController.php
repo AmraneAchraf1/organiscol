@@ -15,7 +15,11 @@ class SalleController extends Controller
     public function index()
     {
         $data = Salle::all();
-        return $data;
+        if ($data->count() > 0) {
+            return response()->json(["success" => true, "salles" => $data]);
+        } else {
+            return response()->json(["success" => false], 400);
+        }
     }
 
     /**
@@ -26,7 +30,7 @@ class SalleController extends Controller
         $data = $request->validated();
         $salle = Salle::create($data);
         if ($salle){
-            return response()->json(["success"=>true,$salle]);
+            return response()->json(["success"=>true,"salle"=>$salle]);
         }else{
             return response()->json(["success"=>false],400);
         }
@@ -38,8 +42,9 @@ class SalleController extends Controller
     public function show(string $id)
     {
         $salle = Salle::find($id);
+
         if ($salle){
-            return response()->json(["success"=>true,$salle]);
+            return response()->json(["success"=>true,"salle"=>$salle]);
         }else{
             return response()->json(["success"=>false,
                                     "message"=>"ne trouve pas la salle de id ".$id],
@@ -50,18 +55,24 @@ class SalleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(SalleRequest $request, string $id)
+    public function update(Request $request, string $id)
     {
-        $data = $request->validated();
+       # validate the data
+        $data = $request->validate([
+            "nom"=>"sometimes|string",
+            "espace"=>"sometimes|integer",
+            "description"=>"sometimes|string",
+            "status"=>"sometimes|boolean",
+        ]);
         $salle = Salle::find($id);
         if($salle){
             if($salle->update($data)){
-                return response()->json(["success"=>true,$salle]);
+                return response()->json(["success"=>true,"salle"=>$salle]);
             }else{
                 return response()->json(["success"=>false],400);
             }
         }else{
-            return response()->json(["message"=>"ne trouve pas la salle de id ".$id]);
+            return response()->json(["message"=>"ne trouve pas la salle de id ".$id],400);
         }
     }
 

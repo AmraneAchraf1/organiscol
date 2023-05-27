@@ -15,7 +15,3 @@ use App\Http\Controllers\api\SalleController ;
 |
 */
 
-// for testing
-Route::get('/', function(){
-    return 'hello';
-});

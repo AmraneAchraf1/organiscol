@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Formateur extends Model
+class Groupe extends Model
 {
     use HasFactory;
     protected $guarded = ['id'];
 
-    public function filieres()
+    public function filiere()
     {
-        return $this->hasMany(Filiere::class, "formateur_id");
+        return $this->belongsTo(Filiere::class, 'filiere_id');
     }
 }

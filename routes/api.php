@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\api\auth\AuthAppController;
+use App\Http\Controllers\api\FiliereController;
+use App\Http\Controllers\api\GroupeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\SalleController ;
@@ -20,7 +22,25 @@ use App\Http\Controllers\api\FormateurController ;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::apiResource("salles",SalleController::class);
-Route::apiResource("formateurs",FormateurController::class);
 
-Route::get('/login', [AuthAppController::class, "index"],);
+
+// Auth middleware routes
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::apiResource('filieres', FiliereController::class);
+    Route::apiResource('groupes', GroupeController::class);
+    Route::apiResource('salles', SalleController::class);
+    Route::apiResource('formateurs', FormateurController::class);
+
+    // logout
+    Route::delete('/logout', [AuthAppController::class, "logout"]);
+});
+
+
+
+// Guest middleware routes
+Route::group(['middleware' => ['guest:sanctum']], function () {
+    Route::post('/login', [AuthAppController::class, "login"],);
+    Route::post('/register', [AuthAppController::class, "register"],);
+});
+
+

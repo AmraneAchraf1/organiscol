@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SalleRequest extends FormRequest
+class FiliereRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,9 +23,7 @@ class SalleRequest extends FormRequest
     {
         return [
             "nom"=>"required|string",
-            "description"=>"sometimes|string",
-            "status"=>"sometimes|boolean",
-            "espace"=>"sometimes|integer",
+            "formateur_id"=>"required|integer|exists:formateurs,id",
         ];
     }
 }

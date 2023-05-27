@@ -22,10 +22,10 @@ class FormateurRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "nom"=>"required",
-            "prenom"=>"required",
-            "type"=>"required",
-            "date_formation"=>"required"
+            "nom"=>"required|string",
+            "prenom"=>"required|string",
+            "type"=>"required|string",
+            "date_formation"=>"sometimes|date",
         ];
     }
 }

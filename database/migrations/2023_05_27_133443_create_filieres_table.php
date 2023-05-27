@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('formateurs', function (Blueprint $table) {
+        Schema::create('filieres', function (Blueprint $table) {
             $table->id();
             $table->string("nom",255);
-            $table->string("prenom",255);
-            $table->enum("type",["vacataire","permanent"]);
-            $table->date("date_formation")->nullable();
+            $table->foreignId("formateur_id")->references("id")->on("formateurs")->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('formateurs');
+        Schema::dropIfExists('filieres');
     }
 };
