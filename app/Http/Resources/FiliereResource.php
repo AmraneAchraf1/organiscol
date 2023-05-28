@@ -18,15 +18,17 @@ class FiliereResource extends JsonResource
         return [
             "id" => $this->id,
             "nom" => $this->nom,
-            "formateur" => [
-                "id" => $this->formateur->id,
-                "nom" => $this->formateur->nom,
-                "prenom" => $this->formateur->prenom,
-                "type" => $this->formateur->type,
-                "date_formation" => $this->formateur->date_formation,
-                "created_at" => $this->formateur->created_at,
-                "updated_at" => $this->formateur->updated_at
-            ],
+            "formateurs" => $this->formateurs->map(function($formateur){
+                return [
+                    "id" => $formateur->id,
+                    "nom" => $formateur->nom,
+                    "prenom" => $formateur->prenom,
+                    "type" => $formateur->type,
+                    "date_formation" => $formateur->date_formation,
+                    "created_at" => $formateur->created_at,
+                    "updated_at" => $formateur->updated_at
+                ];
+            }) ,
             "groupes" => GroupeResource::collection($this->groupes),
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at

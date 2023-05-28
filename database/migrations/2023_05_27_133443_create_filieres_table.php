@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('filieres', function (Blueprint $table) {
             $table->id();
-            $table->string("nom",255);
-            $table->foreignId("formateur_id")->references("id")->on("formateurs")->cascadeOnDelete();
+            $table->string("nom",255)->unique();
             $table->timestamps();
         });
     }

@@ -26,6 +26,7 @@ class FormateurRequest extends FormRequest
             "prenom"=>"required|string",
             "type"=>"required|string",
             "date_formation"=>"sometimes|date",
+            "filieres_ids"=>"sometimes|string",
         ];
     }
 }

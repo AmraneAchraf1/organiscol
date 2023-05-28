@@ -12,6 +12,6 @@ class Formateur extends Model
 
     public function filieres()
     {
-        return $this->hasMany(Filiere::class, "formateur_id");
+        return $this->belongsToMany(Filiere::class, 'formateur_filiere', 'formateur_id', 'filiere_id');
     }
 }

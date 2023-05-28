@@ -10,9 +10,9 @@ class Filiere extends Model
     use HasFactory;
     protected $guarded = ['id'];
 
-    public function formateur()
+    public function formateurs()
     {
-        return $this->belongsTo(Formateur::class, 'formateur_id');
+        return $this->belongsToMany(Formateur::class, 'formateur_filiere', 'filiere_id', 'formateur_id');
     }
     public function groupes()
     {

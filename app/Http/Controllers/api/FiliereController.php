@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\FiliereRequest;
 use App\Http\Resources\FiliereResource;
 use App\Models\Filiere;
+use App\Models\Formateur;
 use Illuminate\Http\Request;
 
 class FiliereController extends Controller
@@ -32,7 +33,20 @@ class FiliereController extends Controller
     public function store(FiliereRequest $request)
     {
         $data = $request->validated();
-        $filiere = Filiere::create($data);
+        $filiere = Filiere::create([
+            "nom"=>$data["nom"]
+        ]);
+        # check formateurs if exist
+        $formateurs_ids = explode(",",$data["formateurs_ids"]);
+        $formateurs = Formateur::find($formateurs_ids);
+        if ($formateurs){
+            $filiere->formateurs()->attach($formateurs);
+        }else{
+            return response()->json(["success"=>false,
+                                    "message"=>"ne trouve pas les formateurs de ids ".$data["formateurs_ids"]],
+                                    400);
+        }
+
         if ($filiere){
             return response()->json(["success"=>true,"filiere"=>$filiere]);
         }else{
@@ -63,11 +77,27 @@ class FiliereController extends Controller
          # validate the data
           $data = $request->validate([
                 "nom"=>"sometimes|string",
-                "formateur_id"=>"sometimes|integer"
+                "formateurs_ids"=>"sometimes|string",
           ]);
           $filiere = Filiere::find($id);
+
+
           if ($filiere){
-                $filiere->update($data);
+              # update formateurs
+              if (isset($data["formateurs_ids"])){
+                  # check if formateur exist
+                  $formateurs = Formateur::find(explode(',',$data["formateurs_ids"]));
+                  if ($formateurs){
+                      $filiere->formateurs()->sync($formateurs);
+
+                  }else{
+                      return response()->json(["success"=>false,
+                          "message"=>"ne trouve pas le formateur de id ".$data["formateur_id"]],
+                          400);
+                  }
+              }
+
+              $filiere->update($data);
                 return response()->json(["success"=>true,"filiere"=>$filiere]);
           }else{
                 return response()->json(["success"=>false,
@@ -84,6 +114,7 @@ class FiliereController extends Controller
         $filiere = Filiere::find($id);
         if ($filiere){
             $filiere->delete();
+
             return response()->json(["success"=>true,"filiere"=>$filiere]);
         }else{
             return response()->json(["success"=>false,

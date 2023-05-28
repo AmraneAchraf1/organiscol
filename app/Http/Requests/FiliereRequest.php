@@ -22,8 +22,8 @@ class FiliereRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "nom"=>"required|string",
-            "formateur_id"=>"required|integer|exists:formateurs,id",
+            "nom"=>"required|string|max:255|unique:filieres,nom",
+            "formateurs_ids"=>"required|string",
         ];
     }
 }
