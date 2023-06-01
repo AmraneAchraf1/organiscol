@@ -33,19 +33,29 @@ class FiliereController extends Controller
     public function store(FiliereRequest $request)
     {
         $data = $request->validated();
+
+        $filiere = null;
+        # check formateurs if exist
+        if (isset($data["formateurs_ids"])){
+            $formateurs_ids = explode(',',$data["formateurs_ids"]);
+            try {
+                $formateurs = Formateur::findOrFail($formateurs_ids);
+                $filiere->formateurs()->sync($formateurs);
+            }catch (\Throwable $th){
+                return response()->json(["success"=>false,
+                    "message"=>"ne trouve pas les formateurs de ids ".$data["formateurs_ids"]],
+                    400);
+            }
+            if (!$formateurs){
+                return response()->json(["success"=>false,
+                    "message"=>"ne trouve pas les formateurs de ids ".$data["formateurs_ids"]],
+                    400);
+            }
+        }
+
         $filiere = Filiere::create([
             "nom"=>$data["nom"]
         ]);
-        # check formateurs if exist
-        $formateurs_ids = explode(",",$data["formateurs_ids"]);
-        $formateurs = Formateur::find($formateurs_ids);
-        if ($formateurs){
-            $filiere->formateurs()->attach($formateurs);
-        }else{
-            return response()->json(["success"=>false,
-                                    "message"=>"ne trouve pas les formateurs de ids ".$data["formateurs_ids"]],
-                                    400);
-        }
 
         if ($filiere){
             return response()->json(["success"=>true,"filiere"=>$filiere]);
@@ -85,16 +95,16 @@ class FiliereController extends Controller
           if ($filiere){
               # update formateurs
               if (isset($data["formateurs_ids"])){
-                  # check if formateur exist
-                  $formateurs = Formateur::find(explode(',',$data["formateurs_ids"]));
-                  if ($formateurs){
+                  # check if formateur exist to update filiere of formateur
+                  try {
+                      $formateurs = Formateur::findOrFail(explode(',',$data["formateurs_ids"]));
                       $filiere->formateurs()->sync($formateurs);
-
-                  }else{
+                  }catch (\Throwable $th){
                       return response()->json(["success"=>false,
-                          "message"=>"ne trouve pas le formateur de id ".$data["formateur_id"]],
+                          "message"=>"ne trouve pas les formateurs de ids ".$data["formateurs_ids"]],
                           400);
                   }
+
               }
 
               $filiere->update($data);

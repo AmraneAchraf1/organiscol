@@ -29,7 +29,14 @@ class FiliereResource extends JsonResource
                     "updated_at" => $formateur->updated_at
                 ];
             }) ,
-            "groupes" => GroupeResource::collection($this->groupes),
+            "groupes" => $this->groupes->map(function($groupe){
+                return [
+                    "id" => $groupe->id,
+                    "nom" => $groupe->nom,
+                    "created_at" => $groupe->created_at,
+                    "updated_at" => $groupe->updated_at
+                ];
+            }),
             "created_at" => $this->created_at,
             "updated_at" => $this->updated_at
         ];

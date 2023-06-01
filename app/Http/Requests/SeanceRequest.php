@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class FormateurRequest extends FormRequest
+class SeanceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,11 +22,12 @@ class FormateurRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "nom"=>"required|string",
-            "prenom"=>"required|string",
-            "type"=>"required|in:vacataire,permanent",
-            "date_formation"=>"sometimes|date",
-            "filieres_ids"=>"sometimes|string",
+            "periode" => "required|in:1,2,3,4",
+            "jour" => "required|in:lundi,mardi,mercredi,jeudi,vendredi,samedi",
+            "salle_id" => "required|exists:salles,id",
+            "formateur_id" => "required|exists:formateurs,id",
+            "groupe_id" => "required|exists:groupes,id",
+            "color" => "sometimes|string|max:255",
         ];
     }
 }

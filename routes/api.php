@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\auth\AuthAppController;
 use App\Http\Controllers\api\FiliereController;
 use App\Http\Controllers\api\GroupeController;
+use App\Http\Controllers\api\SeanceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\SalleController ;
@@ -31,6 +32,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::apiResource('groupes', GroupeController::class);
     Route::apiResource('salles', SalleController::class);
     Route::apiResource('formateurs', FormateurController::class);
+    Route::apiResource('seances', SeanceController::class);
 
     // logout
     Route::delete('/logout', [AuthAppController::class, "logout"]);

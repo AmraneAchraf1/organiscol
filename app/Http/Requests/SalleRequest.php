@@ -22,7 +22,7 @@ class SalleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "nom"=>"required|string",
+            "nom"=>"required|string|unique:salles,nom",
             "description"=>"sometimes|string",
             "status"=>"sometimes|boolean",
             "espace"=>"sometimes|integer",

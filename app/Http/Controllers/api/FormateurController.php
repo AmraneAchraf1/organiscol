@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FiliereRequest;
 use App\Http\Resources\FormateurResource;
 use App\Models\Filiere;
 use Illuminate\Http\Request;
@@ -27,20 +28,33 @@ class FormateurController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(FormateurRequest $request)
+    public function store(FormateurRequest $request): \Illuminate\Http\JsonResponse
     {
         $data = $request->validated();
-        $formateur = Formateur::create($data);
+        $filieres = null;
+
+
         # check filieres if exist
-        $filieres_ids = explode(",", $data["filieres_ids"]);
-        $filieres = Filiere::find($filieres_ids);
-        if ($filieres) {
-            $formateur->filieres()->attach($filieres);
-        } else {
-            return response()->json(["success" => false,
-                "message" => "ne trouve pas les filieres de ids " . $data["filieres_ids"]],
-                400);
+        if(isset($data["filieres_ids"])){
+            $filieres_ids = explode(",",$data["filieres_ids"]);
+            try {
+                $filieres = Filiere::findOrFail($filieres_ids);
+
+            } catch (\Throwable $th) {
+                return response()->json(["success" => false,
+                    "message" => "ne trouve pas les filieres de ids " . $data["filieres_ids"]],
+                    400);
+            }
+            if (!$filieres) {
+                return response()->json(["success" => false,
+                    "message" => "ne trouve pas les filieres de ids " . $data["filieres_ids"]],
+                    400);
+            }
         }
+
+
+        $formateur = Formateur::create($data);
+        $formateur->filieres()->attach($filieres);
 
         if ($formateur){
             return response()->json(["success"=>true,"formateur"=>$formateur]);
@@ -52,7 +66,7 @@ class FormateurController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): \Illuminate\Http\JsonResponse
     {
         $formateur = Formateur::find($id);
         if ($formateur){
@@ -68,7 +82,7 @@ class FormateurController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
         # validate the data
         $data = $request->validate([
@@ -78,18 +92,18 @@ class FormateurController extends Controller
             "date_formation"=>"sometimes|date",
             "filieres_ids"=>"sometimes|string",
         ]);
+
         $formateur = Formateur::find($id);
 
-
-
         if($formateur){
-            # check filieres if exist
+            # check filieres_ids if exist
             if (isset($data["filieres_ids"])){
                 $filieres_ids = explode(",",$data["filieres_ids"]);
-                $filieres = Filiere::find($filieres_ids);
-                if ($filieres){
+                # try to find the filieres and sync them
+                try {
+                    $filieres = Filiere::findOrFail($filieres_ids);
                     $formateur->filieres()->sync($filieres);
-                }else{
+                } catch (\Throwable $th) {
                     return response()->json(["success"=>false,
                         "message"=>"ne trouve pas les filieres de ids ".$data["filieres_ids"]],
                         400);

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('salles', function (Blueprint $table) {
             $table->id();
-            $table->string("nom",255);
+            $table->string("nom",255)->unique();
             $table->string("description",255)->nullable();
             $table->boolean("status")->default(false);
             $table->integer("espace")->nullable();
