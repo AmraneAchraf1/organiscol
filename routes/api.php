@@ -33,7 +33,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::apiResource('salles', SalleController::class);
     Route::apiResource('formateurs', FormateurController::class);
     Route::apiResource('seances', SeanceController::class);
-
+    // print emploi
+    Route::post('print-formateur-emploi',[ SeanceController::class, "print_formateur_emploi"]);
+    Route::post('print-groupe-emploi',[ SeanceController::class, "print_groupe_emploi"]);
     // logout
     Route::delete('/logout', [AuthAppController::class, "logout"]);
 });

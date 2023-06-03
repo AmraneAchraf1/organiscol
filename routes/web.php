@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\api\SeanceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\SalleController ;
 
