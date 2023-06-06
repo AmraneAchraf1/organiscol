@@ -40,7 +40,7 @@ class FiliereController extends Controller
             $formateurs_ids = explode(',',$data["formateurs_ids"]);
             try {
                 $formateurs = Formateur::findOrFail($formateurs_ids);
-                $filiere->formateurs()->sync($formateurs);
+
             }catch (\Throwable $th){
                 return response()->json(["success"=>false,
                     "message"=>"ne trouve pas les formateurs de ids ".$data["formateurs_ids"]],
@@ -56,6 +56,7 @@ class FiliereController extends Controller
         $filiere = Filiere::create([
             "nom"=>$data["nom"]
         ]);
+        $filiere->formateurs()->attach($formateurs);
 
         if ($filiere){
             return response()->json(["success"=>true,"filiere"=>$filiere]);

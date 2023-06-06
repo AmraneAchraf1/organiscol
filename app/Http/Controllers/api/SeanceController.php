@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SeanceRequest;
 use App\Http\Resources\SeanceResource;
+use App\Models\Salle;
 use App\Models\Seance;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -16,9 +17,13 @@ class SeanceController extends Controller
      */
     public function index()
     {
-        return Seance::all()->groupBy('jour')->map(function ($item){
+        $seances =  Seance::all()->groupBy('jour')->map(function ($item){
             return SeanceResource::collection($item);
         });
+
+        $seances["salles"] = Salle::all();
+
+        return $seances;
     }
 
     /**

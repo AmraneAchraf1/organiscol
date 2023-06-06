@@ -122,9 +122,7 @@
 
     <table class="emploi">
            <thead>
-                <tr
-
-                >
+                <tr>
 
                     <th style="border-top: white 1px solid;border-left: white 1px solid"></th>
                     <th> 8H ----------> 11H </th>
