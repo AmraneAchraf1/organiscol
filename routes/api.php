@@ -26,7 +26,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 // Auth middleware routes
-Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::group(['middleware' => ['guest:sanctum']], function () {
 
     Route::apiResource('filieres', FiliereController::class);
     Route::apiResource('groupes', GroupeController::class);

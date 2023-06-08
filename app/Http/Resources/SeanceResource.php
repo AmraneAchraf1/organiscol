@@ -18,11 +18,11 @@ class SeanceResource extends JsonResource
             "id" => $this->id,
             "periode" => $this->periode,
             "jour" => $this->jour,
-            "color" => $this->color,
             "salle" => [
                 "id" => $this->salle->id,
                 "nom" => $this->salle->nom,
             ],
+            "color" => $this->color,
             "formateur" => [
                 "id" => $this->formateur->id,
                 "nom"=> $this->formateur->nom,

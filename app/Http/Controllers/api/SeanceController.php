@@ -17,8 +17,8 @@ class SeanceController extends Controller
      */
     public function index()
     {
-        $seances =  Seance::all()->groupBy('jour')->map(function ($item){
-            return SeanceResource::collection($item);
+        $seances =  SeanceResource::collection(Seance::all())->groupBy("jour")->map(function ($item){
+            return $item->groupBy("periode");
         });
 
         $seances["salles"] = Salle::all();
@@ -92,7 +92,6 @@ class SeanceController extends Controller
         $seance = Seance::find($id);
 
         # check if séance already exist
-
         $seanceExist = Seance::where($data)
             ->where("id","!=",$seance->id)
             ->where("periode",$seance->periode)
