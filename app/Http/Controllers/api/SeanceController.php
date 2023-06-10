@@ -83,6 +83,7 @@ class SeanceController extends Controller
      */
     public function update(Request $request, string $id)
     {
+
         $data = $request->validate([
             "formateur_id" => "sometimes|exists:formateurs,id",
             "groupe_id" => "sometimes|exists:groupes,id",
@@ -91,26 +92,30 @@ class SeanceController extends Controller
 
         $seance = Seance::find($id);
 
-        # check if séance already exist
-        $seanceExist = Seance::where($data)
-            ->where("id","!=",$seance->id)
-            ->where("periode",$seance->periode)
-            ->where("jour",$seance->jour)
-            ->first();
-
-        if ($seanceExist){
-            return response()->json(["success"=>false,"message"=>"séance existe déjà"
-                , "seance"=> new SeanceResource($seanceExist)],400);
+        if(!$seance){
+            return response()->json(["success"=>false,"message"=>"séance $id introuvable"],400);
         }
 
-        if ($seance){
-            $seance->update($data);
-            return response()->json(["success"=>true,"seance"=>new SeanceResource($seance)]);
-        }
+            # check if séance already exist
+            $seanceExist = Seance::where([
+                "periode"=>$seance->periode,
+                "jour"=>$seance->jour,
+            ])
+                ->where("salle_id","!=",$seance->salle->id)
+                ->where(function ($query) use ($data){
+                $query->where("formateur_id",$data["formateur_id"])
+                    ->orWhere("groupe_id",$data["groupe_id"]);
+            })->first();
 
 
 
+            if (!$seanceExist){
+                $seance->update($data);
+                return response()->json(["success"=>true,"seance"=>new SeanceResource($seance)]);
+            }
 
+            return response()->json(["success"=>false,"message"=>"séance existe déjà",
+                "seance" => new SeanceResource($seanceExist)],400);
     }
 
     /**
