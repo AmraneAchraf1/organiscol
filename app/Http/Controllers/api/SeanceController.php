@@ -54,10 +54,11 @@ class SeanceController extends Controller
             "formateur_id"=>$data["formateur_id"],
             "groupe_id"=>$data["groupe_id"],
             "salle_id"=>$data["salle_id"],
+            "color"=>$data["color"],
         ]);
 
         if ($seance){
-            return response()->json(["success"=>true,"seance"=>$seance]);
+            return response()->json(["success"=>true,"seance"=> new SeanceResource($seance)]);
         }else{
             return response()->json(["success"=>false],400);
         }
@@ -126,7 +127,7 @@ class SeanceController extends Controller
         $seance = Seance::find($id);
         if ($seance){
             $seance->delete();
-            return response()->json(["success"=>true]);
+            return response()->json(["success"=>true , "seance" => new SeanceResource($seance)]);
         }
         return response()->json(["success"=>false],400);
     }
