@@ -59,7 +59,7 @@ class SalleController extends Controller
     {
        # validate the data
         $data = $request->validate([
-            "nom"=>"sometimes|string",
+            "nom"=>"sometimes|string|unique:salles,nom",
             "espace"=>"sometimes|integer",
             "description"=>"sometimes|string",
             "status"=>"sometimes|boolean",
@@ -92,4 +92,8 @@ class SalleController extends Controller
         }else{
             return response()->json(["message"=>"ne trouve pas la salle de id ".$id]);
         }
-}}
+
+    }
+
+
+}

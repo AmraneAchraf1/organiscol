@@ -8,7 +8,9 @@ use App\Http\Resources\SeanceResource;
 use App\Models\Salle;
 use App\Models\Seance;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class SeanceController extends Controller
 {
@@ -169,6 +171,10 @@ class SeanceController extends Controller
         return $pdf->download("emploidutemps_formateur.pdf");
     }
 
+    /**
+     * @param Request $request
+     * @return JsonResponse|Response
+     */
     public function print_groupe_emploi (Request $request)
     {
         $data = $request->validate([
@@ -211,6 +217,41 @@ class SeanceController extends Controller
         return $pdf->download("emploidutemps_groupe.pdf");
     }
 
+
+    public  function seances_analysis(){
+        $seances = Seance::all();
+        $salles = Salle::all();
+
+        $total_heures_semaine = 60;
+        $global_heures = $total_heures_semaine * $salles->count();
+        $total_heures = $seances->count() * 2.5;
+        // For all séances
+        $pourcentage = ($total_heures / $global_heures) * 100;
+        $pourcentage = round($pourcentage,2);
+
+        // For each salle
+        $pourcentage_salles = [];
+        foreach ($salles as $salle){
+            $seances_salle = $seances->where("salle_id",$salle->id);
+            $total_heures_salle = $seances_salle->count() * 2.5;
+            $pourcentage_salle = ($total_heures_salle / $total_heures_semaine) * 100;
+            $pourcentage_salle = round($pourcentage_salle,2);
+
+            $pourcentage_salles[] = [
+                "id"=>$salle->id,
+                "salle"=>$salle->nom,
+                "pourcentage"=>$pourcentage_salle,
+                "total_heures"=>$total_heures_salle,
+            ];
+        }
+
+        return response()->json(["success"=>true,
+            "global_analysis" => compact('total_heures', 'global_heures', 'pourcentage'),
+            "analysis_by_salle"=>$pourcentage_salles,
+            ]);
+
+
+    }
 }
 
 

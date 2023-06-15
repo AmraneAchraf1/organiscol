@@ -25,7 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Auth middleware routes
-Route::group(['middleware' => ['guest:sanctum']], function () {
+Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::apiResource('filieres', FiliereController::class);
     Route::apiResource('groupes', GroupeController::class);
@@ -37,6 +37,9 @@ Route::group(['middleware' => ['guest:sanctum']], function () {
     Route::post('print-groupe-emploi',[ SeanceController::class, "print_groupe_emploi"]);
     // logout
     Route::delete('/logout', [AuthAppController::class, "logout"]);
+    // global analysis
+    Route::get("/seances-analysis", [SeanceController::class, "seances_analysis"]);
+
 });
 
 
