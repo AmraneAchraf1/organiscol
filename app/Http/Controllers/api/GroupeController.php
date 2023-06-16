@@ -33,7 +33,7 @@ class GroupeController extends Controller
         $data = $request->validated();
         $groupe = Groupe::create($data);
         if ($groupe){
-            return response()->json(["success"=>true,"groupe"=>$groupe]);
+            return response()->json(["success"=>true,"groupe"=> new GroupeResource($groupe)]);
         }else{
             return response()->json(["success"=>false],400);
         }
@@ -59,7 +59,25 @@ class GroupeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $data = $request->validate([
+                "nom"=>"sometimes|string",
+                "description"=>"sometimes|string",
+                "status"=>"sometimes|boolean",
+                "espace"=>"sometimes|integer",
+            ]);
+
+        $group = Groupe::find($id);
+
+        if ($group){
+            $group->update($data);
+            return response()->json(["success"=>true,"groupe"=>new GroupeResource($group)]);
+        }else{
+            return response()->json(["success"=>false,
+                "message"=>"ne trouve pas le groupe de id ".$id],
+                400);
+
+        }
+
     }
 
     /**
@@ -67,6 +85,14 @@ class GroupeController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $group = Groupe::find($id);
+        if ($group){
+            $group->delete();
+            return response()->json(["success"=>true]);
+        }else{
+            return response()->json(["success"=>false,
+                "message"=>"ne trouve pas le groupe de id ".$id],
+                400);
+        }
     }
 }

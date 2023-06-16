@@ -57,7 +57,7 @@ class FormateurController extends Controller
         $formateur->filieres()->attach($filieres);
 
         if ($formateur){
-            return response()->json(["success"=>true,"formateur"=>$formateur]);
+            return response()->json(["success"=>true,"formateur"=>new FormateurResource($formateur)]);
         }else{
             return response()->json(["success"=>false],400);
         }
@@ -111,7 +111,7 @@ class FormateurController extends Controller
             }
 
             if($formateur->update($data)){
-                return response()->json(["success"=>true,"formateur"=>$formateur]);
+                return response()->json(["success"=>true,"formateur"=> new FormateurResource($formateur)]);
             }else{
                 return response()->json(["success"=>false],400);
             }

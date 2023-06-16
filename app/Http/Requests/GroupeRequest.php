@@ -22,7 +22,7 @@ class GroupeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "nom"=>"required|string",
+            "nom"=>"required|string|unique:groupes,nom",
             "filiere_id"=>"required|integer|exists:filieres,id",
         ];
     }

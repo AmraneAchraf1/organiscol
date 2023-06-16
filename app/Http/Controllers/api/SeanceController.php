@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SeanceRequest;
+use App\Http\Resources\SalleResource;
 use App\Http\Resources\SeanceResource;
 use App\Models\Salle;
 use App\Models\Seance;
@@ -134,13 +135,11 @@ class SeanceController extends Controller
         return response()->json(["success"=>false],400);
     }
 
-    public function print_formateur_emploi(Request $request)
+    public function print_formateur_emploi(Request $request, string $id)
     {
-        $data = $request->validate([
-           "formateur_id" => "required|exists:formateurs,id",
-            ]);
 
-        $seances = Seance::where("formateur_id",$data['formateur_id'])->get();
+
+        $seances = Seance::where("formateur_id",$id)->get();
 
         if($seances->count() == 0){
             return response()->json(["success"=>false,"message"=>"aucune séance trouvée"],400);
@@ -149,6 +148,10 @@ class SeanceController extends Controller
         $pdf_data = $seances->groupBy("jour")->map(function ($item){
             return SeanceResource::collection($item)->groupBy("periode");
         });
+
+        if (!$pdf_data) {
+            return response()->json(["success"=>false,"message"=>"aucune séance trouvée"],400);
+        }
 
         # get masse horaire
         $masse_horaire = $seances->count() * 2.5;
@@ -168,20 +171,28 @@ class SeanceController extends Controller
             "formateur"=>$formateur,
             "annee_formation"=>$annee_formation,
             ])->setPaper('a4', 'landscape');
-        return $pdf->download("emploidutemps_formateur.pdf");
+
+        if(!$pdf){
+            return  response()->json(["success"=>false,"message"=>"erreur lors de la génération du pdf"],400 );
+        }
+
+        $headers = [
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => 'attachment; filename="file.blob"',
+        ];
+
+        return response()->make($pdf->output(), 200, $headers);
     }
 
     /**
      * @param Request $request
      * @return JsonResponse|Response
      */
-    public function print_groupe_emploi (Request $request)
+    public function print_groupe_emploi (Request $request, string $id)
     {
-        $data = $request->validate([
-            "groupe_id" => "required|exists:groupes,id",
-        ]);
 
-        $seances = Seance::where("groupe_id",$data['groupe_id'])->get();
+
+        $seances = Seance::where("groupe_id",$id)->get();
 
         if($seances->count() == 0){
             return response()->json(["success"=>false,"message"=>"aucune séance trouvée"],400);
@@ -214,7 +225,16 @@ class SeanceController extends Controller
                 "formateur"=>$formateur,
             ])->setPaper('a4', 'landscape');
 
-        return $pdf->download("emploidutemps_groupe.pdf");
+        if(!$pdf){
+            return  response()->json(["success"=>false,"message"=>"erreur lors de la génération du pdf"],400 );
+        }
+
+        $headers = [
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => 'attachment; filename="file.blob"',
+        ];
+
+        return response()->make($pdf->output(), 200, $headers);
     }
 
 
@@ -239,9 +259,10 @@ class SeanceController extends Controller
 
             $pourcentage_salles[] = [
                 "id"=>$salle->id,
-                "salle"=>$salle->nom,
                 "pourcentage"=>$pourcentage_salle,
                 "total_heures"=>$total_heures_salle,
+                "global_heures"=>$total_heures_semaine,
+                "salle" => new SalleResource($salle),
             ];
         }
 

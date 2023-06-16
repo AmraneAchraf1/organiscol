@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\SalleController ;
 use App\Http\Controllers\api\FormateurController ;
+use Laravel\Sanctum\PersonalAccessToken;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +22,12 @@ use App\Http\Controllers\api\FormateurController ;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+
+    return response()->json([
+        "user" => $request->user(),
+        "token" => $request->user()->currentAccessToken(),
+    ]);
 });
 
 // Auth middleware routes
@@ -33,8 +39,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::apiResource('formateurs', FormateurController::class);
     Route::apiResource('seances', SeanceController::class);
     // print emploi
-    Route::post('print-formateur-emploi',[ SeanceController::class, "print_formateur_emploi"]);
-    Route::post('print-groupe-emploi',[ SeanceController::class, "print_groupe_emploi"]);
+    Route::get('print-formateur-emploi/{id}',[ SeanceController::class, "print_formateur_emploi"]);
+    Route::get('print-groupe-emploi/{id}',[ SeanceController::class, "print_groupe_emploi"]);
     // logout
     Route::delete('/logout', [AuthAppController::class, "logout"]);
     // global analysis
