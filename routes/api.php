@@ -45,6 +45,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('/logout', [AuthAppController::class, "logout"]);
     // global analysis
     Route::get("/seances-analysis", [SeanceController::class, "seances_analysis"]);
+    Route::get("/export_emploi", [SeanceController::class, "export_emploi"]);
+    Route::post("/import_emploi", [SeanceController::class, "import_emploi"]);
 
 });
 

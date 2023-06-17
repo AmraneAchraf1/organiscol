@@ -4,14 +4,21 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SeanceRequest;
+use App\Http\Resources\FormateurResource;
+use App\Http\Resources\GroupeResource;
 use App\Http\Resources\SalleResource;
 use App\Http\Resources\SeanceResource;
+use App\Models\Filiere;
+use App\Models\Formateur;
+use App\Models\Groupe;
 use App\Models\Salle;
 use App\Models\Seance;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use function PHPSTORM_META\map;
 
 class SeanceController extends Controller
 {
@@ -273,6 +280,126 @@ class SeanceController extends Controller
 
 
     }
+
+
+    public function export_emploi(){
+        // Export As Json File And Download It
+
+        $seances = Seance::all();
+        $salles = Salle::all();
+        $formateurs = Formateur::all();
+        $groupes = Groupe::all();
+        $filieres = Filiere::all();
+
+
+        $data = compact('seances', 'salles', 'formateurs', 'groupes', 'filieres');
+
+        $json = json_encode($data);
+
+        $headers = [
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => 'attachment; filename="file.blob"',
+        ];
+
+        return response()->make($json, 200, $headers);
+
+
+
+    }
+
+    public function import_emploi(Request $request){
+
+        // import json file and save it to database
+
+        $file = $request->file("file");
+
+        $json = file_get_contents($file);
+        $data = json_decode($json);
+
+        $filieres = $data->filieres;
+        $salles = $data->salles;
+        $formateurs = $data->formateurs;
+        $seances = $data->seances;
+        $groupes = $data->groupes;
+
+        if(
+            count($filieres) == 0 ||
+            count($salles) == 0 ||
+            count($formateurs) == 0 ||
+            count($groupes) == 0 ||
+            count($seances) == 0
+        ){
+            return response()->json(["success"=>false, "message"=>"aucune donnée trouvée"],400);
+        }else{
+
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
+
+
+            // delete all data
+            Filiere::truncate();
+            Salle::truncate();
+            Formateur::truncate();
+            DB::table("formateur_filiere")->truncate();
+            Seance::truncate();
+            Groupe::truncate();
+            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+
+            // insert filieres
+            foreach ($filieres as $filiere){
+                $f = new Filiere();
+                $f->nom = $filiere->nom;
+                $f->save();
+            }
+
+            // insert salles
+            foreach ($salles as $salle){
+                $s = new Salle();
+                $s->nom = $salle->nom;
+                $s->status = $salle->status;
+                $s->description = $salle->description;
+                $s->save();
+            }
+
+            // insert formateurs
+            foreach ($formateurs as $formateur){
+                $f = new Formateur();
+                $f->nom = $formateur->nom;
+                $f->prenom = $formateur->prenom;
+                $f->type = $formateur->type;
+                $f->date_formation = $formateur->date_formation;
+                $f->save();
+            }
+
+            // insert groupes
+            foreach ($groupes as $groupe){
+                $g = new Groupe();
+                $g->nom = $groupe->nom;
+                $g->filiere_id = $groupe->filiere_id;
+                $g->save();
+            }
+
+            // insert seances
+            foreach ($seances as $seance){
+                $s = new Seance();
+                $s->jour = $seance->jour;
+                $s->periode = $seance->periode;
+                $s->salle_id = $seance->salle_id;
+                $s->formateur_id = $seance->formateur_id;
+                $s->groupe_id = $seance->groupe_id;
+                $s->color = $seance->color;
+                $s->save();
+            }
+
+            return response()->json(["success"=>true, "message"=>"données importées avec succès"],200);
+        }
+
+
+
+
+    }
+
+
+
 }
 
 

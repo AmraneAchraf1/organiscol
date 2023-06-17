@@ -109,7 +109,7 @@ class FiliereController extends Controller
               }
 
               $filiere->update($data);
-                return response()->json(["success"=>true,"filiere"=>$filiere]);
+                return response()->json(["success"=>true,"filiere"=> new FiliereResource($filiere) ]);
           }else{
                 return response()->json(["success"=>false,
                                         "message"=>"ne trouve pas la filiere de id ".$id],

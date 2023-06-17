@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('seances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("salle_id")->constrained("salles");
-            $table->foreignId("formateur_id")->constrained("formateurs");
-            $table->foreignId("groupe_id")->constrained("groupes");
+            $table->foreignId("salle_id")->constrained("salles")->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId("formateur_id")->constrained("formateurs")->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId("groupe_id")->constrained("groupes")->cascadeOnDelete()->cascadeOnUpdate();
             $table->string("color",255)->nullable();
             $table->enum("periode", [1,2,3,4]);
             $table->enum("jour", ["lundi","mardi","mercredi","jeudi","vendredi","samedi"]);

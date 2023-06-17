@@ -90,7 +90,7 @@ class FormateurController extends Controller
             "prenom"=>"sometimes|string",
             "type"=>"sometimes|string",
             "date_formation"=>"sometimes|date",
-            "filieres_ids"=>"sometimes|string",
+            "filieres_ids"=>"sometimes",
         ]);
 
         $formateur = Formateur::find($id);
@@ -98,15 +98,20 @@ class FormateurController extends Controller
         if($formateur){
             # check filieres_ids if exist
             if (isset($data["filieres_ids"])){
-                $filieres_ids = explode(",",$data["filieres_ids"]);
-                # try to find the filieres and sync them
-                try {
-                    $filieres = Filiere::findOrFail($filieres_ids);
-                    $formateur->filieres()->sync($filieres);
-                } catch (\Throwable $th) {
-                    return response()->json(["success"=>false,
-                        "message"=>"ne trouve pas les filieres de ids ".$data["filieres_ids"]],
-                        400);
+                if($data["filieres_ids"] === 0){
+                    // detach all filieres
+                    $formateur->filieres()->detach();
+                }else{
+                    $filieres_ids = explode(",",$data["filieres_ids"]);
+                    # try to find the filieres and sync them
+                    try {
+                        $filieres = Filiere::findOrFail($filieres_ids);
+                        $formateur->filieres()->sync($filieres);
+                    } catch (\Throwable $th) {
+                        return response()->json(["success"=>false,
+                            "message"=>"ne trouve pas les filieres de ids ".$data["filieres_ids"]],
+                            400);
+                    }
                 }
             }
 
