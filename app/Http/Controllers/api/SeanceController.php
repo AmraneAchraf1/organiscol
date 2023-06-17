@@ -189,6 +189,7 @@ class SeanceController extends Controller
         ];
 
         return response()->make($pdf->output(), 200, $headers);
+
     }
 
     /**
@@ -242,6 +243,7 @@ class SeanceController extends Controller
         ];
 
         return response()->make($pdf->output(), 200, $headers);
+
     }
 
 
@@ -322,6 +324,7 @@ class SeanceController extends Controller
         $seances = $data->seances;
         $groupes = $data->groupes;
 
+
         if(
             count($filieres) == 0 ||
             count($salles) == 0 ||
@@ -333,8 +336,6 @@ class SeanceController extends Controller
         }else{
 
             DB::statement('SET FOREIGN_KEY_CHECKS=0');
-
-
             // delete all data
             Filiere::truncate();
             Salle::truncate();
@@ -347,46 +348,61 @@ class SeanceController extends Controller
             // insert filieres
             foreach ($filieres as $filiere){
                 $f = new Filiere();
+                $f->id = $filiere->id;
                 $f->nom = $filiere->nom;
+                $f->created_at = $filiere->created_at;
+                $f->updated_at = $filiere->updated_at;
                 $f->save();
             }
 
             // insert salles
             foreach ($salles as $salle){
                 $s = new Salle();
+                $s->id = $salle->id;
                 $s->nom = $salle->nom;
                 $s->status = $salle->status;
                 $s->description = $salle->description;
+                $s->created_at = $salle->created_at;
+                $s->updated_at = $salle->updated_at;
                 $s->save();
             }
 
             // insert formateurs
             foreach ($formateurs as $formateur){
                 $f = new Formateur();
+                $f->id = $formateur->id;
                 $f->nom = $formateur->nom;
                 $f->prenom = $formateur->prenom;
                 $f->type = $formateur->type;
                 $f->date_formation = $formateur->date_formation;
+                $f->created_at = $formateur->created_at;
+                $f->updated_at = $formateur->updated_at;
                 $f->save();
             }
 
             // insert groupes
             foreach ($groupes as $groupe){
                 $g = new Groupe();
+                $g->id = $groupe->id;
                 $g->nom = $groupe->nom;
                 $g->filiere_id = $groupe->filiere_id;
+                $g->created_at = $groupe->created_at;
+                $g->updated_at = $groupe->updated_at;
                 $g->save();
             }
 
             // insert seances
             foreach ($seances as $seance){
                 $s = new Seance();
+                $s->id = $seance->id;
                 $s->jour = $seance->jour;
                 $s->periode = $seance->periode;
                 $s->salle_id = $seance->salle_id;
                 $s->formateur_id = $seance->formateur_id;
                 $s->groupe_id = $seance->groupe_id;
                 $s->color = $seance->color;
+                $s->created_at = $seance->created_at;
+                $s->updated_at = $seance->updated_at;
                 $s->save();
             }
 

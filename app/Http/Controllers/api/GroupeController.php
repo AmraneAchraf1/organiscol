@@ -64,6 +64,7 @@ class GroupeController extends Controller
                 "description"=>"sometimes|string",
                 "status"=>"sometimes|boolean",
                 "espace"=>"sometimes|integer",
+                "filiere_id"=>"sometimes|integer|exists:filieres,id",
             ]);
 
         $group = Groupe::find($id);

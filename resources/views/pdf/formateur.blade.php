@@ -85,6 +85,11 @@
                  <td class="header-middle"
                  style="width: 516px;text-align: center;padding-top:111px;"
                  >
+                     <h2
+                         style="margin: 0; padding: 0; font-size: 24px;text-align: center;padding-bottom: 32px;margin-right: 106px;"
+                     >
+                         Emploi du temps du formateur
+                     </h2>
                      <span style="text-align: center;border: 1.5px solid black; padding: 4px 40px">
                          Masse Horaire hebdomadaire
                      </span>
@@ -111,6 +116,11 @@
                                 <h3 style="padding: 0; margin: 0; text-align: center">{{$annee_formation}}</h3>
                             </tr>
                         </table>
+                        <h4
+                            style="padding: 0; margin: 0;text-align: center;margin-top: 12px"
+                        >
+                            {{Carbon\Carbon::now()->format('d/m/Y')}}
+                        </h4>
                     </div>
                 </td>
              </tr>
@@ -548,7 +558,7 @@
 
 <htmlpagefooter name="page-footer">
     <div class="footer">
-
+        N.B/ Le présent emploi du temps peut subir un changement, si nécessaire par la direction de l’établissement.
     </div>
 </htmlpagefooter>
 
